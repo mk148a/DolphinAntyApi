@@ -11,38 +11,34 @@ namespace DolphinAntyApi.Services
     public class DolphinAntyClient
     {
         private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions _jsonSerializerOptions;
+        private const string BaseUrl = "https://api.dolphinanty.com/v1";
 
-        public DolphinAntyClient(string baseUrl, string apiKey)
+        public DolphinAntyClient()
         {
-            _httpClient = new HttpClient { BaseAddress = new Uri(baseUrl) };
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-
-            _jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri(BaseUrl);
         }
 
-        public async Task<string> Get(string endpoint)
+
+        // Örnek bir HTTP GET isteği için genel metot
+        private async Task<T> GetAsync<T>(string endpoint)
         {
-            using var response = await _httpClient.GetAsync(endpoint);
+            var response = await _httpClient.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(content);
         }
 
-        public async Task<string> Post<T>(string endpoint, T data)
+        // Örnek bir HTTP POST isteği için genel metot
+        private async Task<T> PostAsync<T>(string endpoint, object data)
         {
-            var json = JsonSerializer.Serialize(data, _jsonSerializerOptions);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            using var response = await _httpClient.PostAsync(endpoint, content);
+            var jsonData = JsonSerializer.Serialize(data);
+            var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, httpContent);
             response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(content);
         }
-
         // Diğer HTTP metodları buraya eklenebilir (PUT, DELETE, vb.)
     }
 }
