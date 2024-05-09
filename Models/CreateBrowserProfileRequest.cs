@@ -1,62 +1,52 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
-namespace DolphinAntyApi.Models
+namespace GoLoginApi.Models
 {
    
 
     public class CreateBrowserProfileRequest
     {
-        public long id { get; set; }
         public string name { get; set; }
         public string browserType { get; set; }
+        public string os { get; set; }
+        public Navigator navigator { get; set; }
+        public bool proxyEnabled { get; set; }
+        public Proxy proxy { get; set; }
+        public Fonts fonts { get; set; }
+
+    }
+    public class Fonts
+    {
+        public List<string> families { get; set; }
+        public bool enableMasking { get; set; }
+        public bool enableDomRect { get; set; }
+    }
+
+    public class Navigator
+    {
+        public string userAgent { get; set; }
+        public string resolution { get; set; }
+        public string language { get; set; }
         public string platform { get; set; }
-        public string platformVersion { get; set; }
-        public string mainWebsite { get; set; }
-        public Useragent useragent { get; set; }
-        public Webrtc webrtc { get; set; }
-        public Canvas canvas { get; set; }
-        public Webgl webgl { get; set; }
-        public WebglInfo webglInfo { get; set; }
-        public Locale locale { get; set; }
-    }
-    public class Canvas
-    {
-        public string mode { get; set; }
+        public bool doNotTrack { get; set; }
+        public int hardwareConcurrency { get; set; }
+        public int deviceMemory { get; set; }
+        public int maxTouchPoints { get; set; }
     }
 
-    public class Locale
-    {
-        public string mode { get; set; }
-        public string value { get; set; }
-    }
 
- 
 
-    public class Useragent
-    {
-        public string mode { get; set; }
-        public string value { get; set; }
-    }
 
-    public class Webgl
-    {
-        public string mode { get; set; }
-    }
 
-    public class WebglInfo
-    {
-        public string mode { get; set; }
-        public string vendor { get; set; }
-        public string renderer { get; set; }
-    }
 
-    public class Webrtc
-    {
-        public string mode { get; set; }
-    }
+
+
+
 
 }
