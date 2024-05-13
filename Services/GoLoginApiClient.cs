@@ -61,21 +61,30 @@ namespace GoLoginApi.Services
             {
                 NullValueHandling = NullValueHandling.Ignore
             };
-            //if (data.Equals(""))
-            //{
-            //    BearerToken tokenObj = new BearerToken
-            //    {
-            //        Token = _bearerToken
-            //    };
-            //    data = tokenObj;
-
-            //}
             var jsonData = JsonConvert.SerializeObject(data,settings);
             var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(endpoint, httpContent);
-            response.EnsureSuccessStatusCode();
+           // response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(content);
+        }
+        public async Task<string> PostAsync(string endpoint, object data)
+        {
+            // Yetkilendirme başlığını ekleme
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
+
+            // Null olan değerlerin eklenmemesini sağlamak için JsonSerializerSettings kullanın
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+          
+            var jsonData = JsonConvert.SerializeObject(data, settings);
+            var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, httpContent);
+            // response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            return content;
         }
         // Diğer HTTP metodları buraya eklenebilir (PUT, DELETE, vb.)
 
@@ -85,14 +94,9 @@ namespace GoLoginApi.Services
             // Yetkilendirme başlığını ekleme
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
             await _httpClient.DeleteAsync(endpoint);
-           // response.EnsureSuccessStatusCode();
-           //var content = await response.Content.ReadAsStringAsync();
             
         }
 
-        public static implicit operator GoLoginApiClient(GoLoginApiService v)
-        {
-            throw new NotImplementedException();
-        }
+    
     }
 }

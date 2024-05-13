@@ -53,8 +53,21 @@ namespace GoLoginApiApi.Services
             request.ProfileId = browserProfileId;
             request.Sync = true;
             // DolphinAntyClient'tan PostAsync metodunu kullanarak isteği gönderin
-            var httpResponse =(StartBrowserProfileResponse) await _client.PostAsync<StartBrowserProfileResponse>(endpoint, request);
-            return httpResponse;
+            try
+            {
+                var httpResponse = (StartBrowserProfileResponse)await _client.PostAsync<StartBrowserProfileResponse>(endpoint, request);
+                return httpResponse;
+            }
+            catch
+            {
+                var httpResponse = await _client.PostAsync(endpoint, request);
+                StartBrowserProfileResponse failResponse = new StartBrowserProfileResponse();
+
+                failResponse.Status = "fail";
+                failResponse.WsUrl = httpResponse;
+                return failResponse;
+            }
+          
 
         }
 
